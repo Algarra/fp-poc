@@ -1,13 +1,11 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
-
 "use client";
 import { useConfigStore } from "@/app/zustand/useConfigStore";
 import { useEffect, useState } from "react";
 
 export const FPGenerator = () => {
-  const [fixedFP, setFixedFP] = useState<string | null>(null);
-  const [variableFP, setVariableFP] = useState<string | null>(null);
-  const [combinedFP, setCombinedFp] = useState<string | null>(null);
+  const [fixedFP, setFixedFP] = useState<string>("");
+  const [variableFP, setVariableFP] = useState<string>("");
+  const [combinedFP, setCombinedFp] = useState<string>("");
   const [userIp, setUserIp] = useState<string | null>(null);
 
   const config = useConfigStore((state) => state.config);
@@ -25,7 +23,7 @@ export const FPGenerator = () => {
   useEffect(() => {
     (async () => {
       if (!userIp) return;
-      const newFixedData: any = {};
+      const newFixedData: { [key: string]: unknown } = {};
 
       for (const [key, value] of Object.entries(config.fixed)) {
         if (value.enabled) {
@@ -39,7 +37,7 @@ export const FPGenerator = () => {
       );
       setFixedFP(fixedFP);
 
-      const newVariableData: any = {};
+      const newVariableData: { [key: string]: unknown } = {};
 
       for (const [key, value] of Object.entries(config.variable)) {
         if (value.enabled) {
