@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { FPConfig, UseConfigStore } from "./types";
 
 export const useConfigStore = create<UseConfigStore>((set, get) => ({
+  ipEnabled: true,
   config: {
     fixed: {
       platform: {
@@ -202,5 +203,8 @@ export const useConfigStore = create<UseConfigStore>((set, get) => ({
         variable: variableConfig,
       },
     });
+  },
+  setChangeIpEnabled: (newValue) => {
+    set({ ipEnabled: newValue });
   },
 }));

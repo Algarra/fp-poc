@@ -32,6 +32,7 @@ export type FPConfig = {
 };
 
 export type UseConfigStore = {
+  ipEnabled: boolean;
   config: FPConfig;
   onEnableChangeConfig: (
     configName: keyof FPConfig["fixed"] | keyof FPConfig["variable"],
@@ -39,4 +40,5 @@ export type UseConfigStore = {
   ) => void;
   setFixedConfig: (config: (keyof FPConfig["fixed"])[]) => void;
   setVariableConfig: (config: (keyof FPConfig["variable"])[]) => void;
+  setChangeIpEnabled: (newValue: boolean) => void;
 };

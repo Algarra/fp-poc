@@ -8,6 +8,7 @@ export const FPGenerator = () => {
   const [variableFP, setVariableFP] = useState<string>("");
   const [combinedFP, setCombinedFp] = useState<string>("");
   const [userIp, setUserIp] = useState<string | null>(null);
+  const isIPEnabled = useConfigStore((state) => state.ipEnabled);
 
   const config = useConfigStore((state) => state.config);
 
@@ -25,6 +26,7 @@ export const FPGenerator = () => {
   useEffect(() => {
     (async () => {
       if (!userIp) return;
+      const FPIP = isIPEnabled ? userIp : "";
       const newFixedData: { [key: string]: unknown } = {};
       for (const [key, value] of Object.entries(config.fixed)) {
         if (value.enabled) {
@@ -33,7 +35,7 @@ export const FPGenerator = () => {
         }
       }
       const fixedFP = await generateFingerprint(
-        JSON.stringify(newFixedData) + userIp
+        JSON.stringify(newFixedData) + FPIP
       );
       setFixedFP(fixedFP);
 
@@ -47,12 +49,12 @@ export const FPGenerator = () => {
       }
 
       const fvariableFP = await generateFingerprint(
-        JSON.stringify(newVariableData) + userIp
+        JSON.stringify(newVariableData) + FPIP
       );
       setVariableFP(fvariableFP);
 
       const combinedFP = await generateFingerprint(
-        JSON.stringify(newVariableData) + JSON.stringify(newFixedData) + userIp
+        JSON.stringify(newVariableData) + JSON.stringify(newFixedData) + FPIP
       );
       setCombinedFp(combinedFP);
     })();
