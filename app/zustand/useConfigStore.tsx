@@ -168,4 +168,39 @@ export const useConfigStore = create<UseConfigStore>((set, get) => ({
       },
     });
   },
+  setFixedConfig: (fixedSelectedValues) => {
+    const config = get().config;
+    const fixedConfig = config.fixed;
+
+    (Object.keys(fixedConfig) as Array<keyof typeof fixedConfig>).forEach(
+      (key) => {
+        if (fixedSelectedValues.includes(key)) fixedConfig[key].enabled = true;
+        else fixedConfig[key].enabled = false;
+      }
+    );
+    set({
+      config: {
+        ...config,
+        fixed: fixedConfig,
+      },
+    });
+  },
+  setVariableConfig: (variableSelectedValues) => {
+    const config = get().config;
+    const variableConfig = config.variable;
+
+    (Object.keys(variableConfig) as Array<keyof typeof variableConfig>).forEach(
+      (key) => {
+        if (variableSelectedValues.includes(key))
+          variableConfig[key].enabled = true;
+        else variableConfig[key].enabled = false;
+      }
+    );
+    set({
+      config: {
+        ...config,
+        variable: variableConfig,
+      },
+    });
+  },
 }));

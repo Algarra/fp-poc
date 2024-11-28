@@ -37,4 +37,6 @@ export type UseConfigStore = {
     configName: keyof FPConfig["fixed"] | keyof FPConfig["variable"],
     enabledNewValue: boolean
   ) => void;
+  setFixedConfig: (config: (keyof FPConfig["fixed"])[]) => void;
+  setVariableConfig: (config: (keyof FPConfig["variable"])[]) => void;
 };

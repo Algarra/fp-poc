@@ -1,6 +1,7 @@
 "use client";
 import { useConfigStore } from "@/app/zustand/useConfigStore";
 import { useEffect, useState } from "react";
+import { useLocalstorageConfigValues } from "./hooks/useLocalStorageConfigValues";
 
 export const FPGenerator = () => {
   const [fixedFP, setFixedFP] = useState<string>("");
@@ -20,18 +21,17 @@ export const FPGenerator = () => {
       .join("");
   };
 
+  useLocalstorageConfigValues();
   useEffect(() => {
     (async () => {
       if (!userIp) return;
       const newFixedData: { [key: string]: unknown } = {};
-
       for (const [key, value] of Object.entries(config.fixed)) {
         if (value.enabled) {
           const currentValue = await value.get();
           newFixedData[key] = currentValue;
         }
       }
-
       const fixedFP = await generateFingerprint(
         JSON.stringify(newFixedData) + userIp
       );
