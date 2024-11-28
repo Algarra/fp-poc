@@ -71,7 +71,7 @@ export const FPGenerator = () => {
 
   return (
     <div className=" my-14 w-full text-center">
-      <h1>Yous FP is:</h1>
+      <h1>Your FP is:</h1>
       <h4>
         <b>Fixed FP:</b>
         {fixedFP}
