@@ -58,7 +58,7 @@ export const FPGenerator = () => {
       );
       setCombinedFp(combinedFP);
     })();
-  }, [config, userIp]);
+  }, [config, userIp, isIPEnabled]);
 
   useEffect(() => {
     (async () => {
