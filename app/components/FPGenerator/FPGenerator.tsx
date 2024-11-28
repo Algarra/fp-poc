@@ -23,7 +23,7 @@ export const FPGenerator = () => {
   useEffect(() => {
     (async () => {
       if (!userIp) return;
-      const newFixedData = {};
+      const newFixedData: any = {};
 
       for (const [key, value] of Object.entries(config.fixed)) {
         if (value.enabled) {
@@ -31,14 +31,13 @@ export const FPGenerator = () => {
           newFixedData[key] = currentValue;
         }
       }
-      console.log("🚀 ~ newFixedData:", newFixedData);
 
       const fixedFP = await generateFingerprint(
         JSON.stringify(newFixedData) + userIp
       );
       setFixedFP(fixedFP);
 
-      const newVariableData = {};
+      const newVariableData: any = {};
 
       for (const [key, value] of Object.entries(config.variable)) {
         if (value.enabled) {
@@ -46,7 +45,6 @@ export const FPGenerator = () => {
           newVariableData[key] = currentValue;
         }
       }
-      console.log("🚀 ~ newVariableData:", newVariableData);
 
       const fvariableFP = await generateFingerprint(
         JSON.stringify(newVariableData) + userIp
