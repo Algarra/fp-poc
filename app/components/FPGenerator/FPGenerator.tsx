@@ -1,3 +1,5 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 "use client";
 import { useConfigStore } from "@/app/zustand/useConfigStore";
 import { useEffect, useState } from "react";
