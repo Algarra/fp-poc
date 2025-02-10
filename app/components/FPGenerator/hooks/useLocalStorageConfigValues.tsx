@@ -3,38 +3,51 @@ import { useEffect } from "react";
 
 export const useLocalstorageConfigValues = () => {
   const config = useConfigStore((state) => state.config);
-  const setFixedConfig = useConfigStore((state) => state.setFixedConfig);
-  const setVariableConfig = useConfigStore((state) => state.setVariableConfig);
+  const setDeviceConfig = useConfigStore((state) => state.setDeviceConfig);
+  const setBrowserConfig = useConfigStore((state) => state.setBrowserConfig);
+	const setUserSettingsConfig = useConfigStore(
+		(state) => state.setUserSettingsConfig
+	);
+
 
   useEffect(() => {
-    (async () => {
-      setVariableConfig(
-        JSON.parse(window.localStorage.getItem("variableData") ?? "[]")
-      );
-      setFixedConfig(
-        JSON.parse(window.localStorage.getItem("fixedData") ?? "[]")
-      );
-    })();
-  }, []);
+			setDeviceConfig(
+				JSON.parse(window.localStorage.getItem("deviceData") ?? "[]")
+			);
+			setBrowserConfig(
+				JSON.parse(window.localStorage.getItem("browserData") ?? "[]")
+			);
+			setUserSettingsConfig(
+				JSON.parse(window.localStorage.getItem("userConfigData") ?? "[]")
+			);
+	}, [setDeviceConfig, setBrowserConfig, setUserSettingsConfig]);
 
   useEffect(() => {
-    (async () => {
-      const enabledFixedValues: string[] = [];
-      Object.entries(config.fixed).forEach(([key, value]) => {
-        if (value.enabled) enabledFixedValues.push(key);
-      });
-      const enabledVariableValues: string[] = [];
-      Object.entries(config.variable).forEach(([key, value]) => {
-        if (value.enabled) enabledVariableValues.push(key);
-      });
-      window.localStorage.setItem(
-        "variableData",
-        JSON.stringify(enabledVariableValues)
-      );
-      window.localStorage.setItem(
-        "fixedData",
-        JSON.stringify(enabledFixedValues)
-      );
-    })();
+		const enabledDeviceValues: string[] = [];
+		Object.entries(config.device).forEach(([key, value]) => {
+			if (value.enabled) enabledDeviceValues.push(key);
+		});
+		const enabledBrowserValues: string[] = [];
+		Object.entries(config.browser).forEach(([key, value]) => {
+			if (value.enabled) enabledBrowserValues.push(key);
+		});
+		const enabledUserSettingsValues: string[] = [];
+		Object.entries(config.userSettings).forEach(([key, value]) => {
+			if (value.enabled) enabledUserSettingsValues.push(key);
+		});
+
+		window.localStorage.setItem(
+			"browserData",
+			JSON.stringify(enabledBrowserValues)
+		);
+		window.localStorage.setItem(
+			"deviceData",
+			JSON.stringify(enabledDeviceValues)
+		);
+		window.localStorage.setItem(
+			"userConfigData",
+			JSON.stringify(enabledUserSettingsValues)
+		);
   }, [config]);
+
 };

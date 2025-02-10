@@ -1,3 +1,4 @@
+
 import { ConfigTable } from "./components/ConfigTable";
 import { FPGenerator } from "./components/FPGenerator";
 

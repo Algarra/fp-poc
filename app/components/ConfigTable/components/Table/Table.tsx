@@ -8,8 +8,9 @@ export const Table = ({ group }: { group: keyof FPConfig }) => {
     useShallow(
       (state) =>
         Object.keys(state.config[group]) as Array<
-          | keyof (typeof state.config)["fixed"]
-          | keyof (typeof state.config)["variable"]
+          | keyof (typeof state.config)["device"]
+          | keyof (typeof state.config)["browser"]
+					| keyof (typeof state.config)["browser"]
         >
     )
   );

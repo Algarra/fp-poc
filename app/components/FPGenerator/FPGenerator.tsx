@@ -4,14 +4,13 @@ import { useEffect, useState } from "react";
 import { useLocalstorageConfigValues } from "./hooks/useLocalStorageConfigValues";
 
 export const FPGenerator = () => {
-  const [fixedFP, setFixedFP] = useState<string>("");
-  const [variableFP, setVariableFP] = useState<string>("");
+  const [deviceFP, setDeviceFP] = useState<string>("");
+  const [browserFP, setBrowserFP] = useState<string>("");
+	const [userSettingsFP, setUserSettingsFP] = useState<string>("");
   const [combinedFP, setCombinedFp] = useState<string>("");
-  const [userIp, setUserIp] = useState<string | null>(null);
-  const isIPEnabled = useConfigStore((state) => state.ipEnabled);
 
   const config = useConfigStore((state) => state.config);
-
+	const resetConfigValues = useConfigStore((state) => state.resetConfigValues);
   const generateFingerprint = async (data: string) => {
     const hash = await crypto.subtle.digest(
       "SHA-256",
@@ -25,65 +24,73 @@ export const FPGenerator = () => {
   useLocalstorageConfigValues();
   useEffect(() => {
     (async () => {
-      if (!userIp) return;
-      const FPIP = isIPEnabled ? userIp : "";
-      const newFixedData: { [key: string]: unknown } = {};
-      for (const [key, value] of Object.entries(config.fixed)) {
+      const newDeviceData: { [key: string]: unknown } = {};
+      for (const [key, value] of Object.entries(config.device)) {
         if (value.enabled) {
           const currentValue = await value.get();
-          newFixedData[key] = currentValue;
+          newDeviceData[key] = currentValue;
         }
       }
       const fixedFP = await generateFingerprint(
-        JSON.stringify(newFixedData) + FPIP
+        JSON.stringify(newDeviceData)
       );
-      setFixedFP(fixedFP);
+      setDeviceFP(fixedFP);
 
-      const newVariableData: { [key: string]: unknown } = {};
-
-      for (const [key, value] of Object.entries(config.variable)) {
+      const newBrowserData: { [key: string]: unknown } = {};
+      for (const [key, value] of Object.entries(config.browser)) {
         if (value.enabled) {
           const currentValue = await value.get();
-          newVariableData[key] = currentValue;
+          newBrowserData[key] = currentValue;
         }
       }
-
-      const fvariableFP = await generateFingerprint(
-        JSON.stringify(newVariableData) + FPIP
+      const browserFP = await generateFingerprint(
+        JSON.stringify(newBrowserData)
       );
-      setVariableFP(fvariableFP);
+      setBrowserFP(browserFP);
 
-      const combinedFP = await generateFingerprint(
-        JSON.stringify(newVariableData) + JSON.stringify(newFixedData) + FPIP
-      );
+			      const newUserSettingsData: { [key: string]: unknown } = {};
+						for (const [key, value] of Object.entries(config.userSettings)) {
+							if (value.enabled) {
+								const currentValue = await value.get();
+								newUserSettingsData[key] = currentValue;
+							}
+						}
+						const userSettingsFP = await generateFingerprint(
+							JSON.stringify(newUserSettingsData)
+						);
+						setUserSettingsFP(userSettingsFP);
+
+      const combinedFP = fixedFP + '__' + browserFP + '__' + userSettingsFP;
       setCombinedFp(combinedFP);
     })();
-  }, [config, userIp, isIPEnabled]);
-
-  useEffect(() => {
-    (async () => {
-      const ip = await fetch("https://api.ipify.org?format=json").then((res) =>
-        res.json()
-      );
-      setUserIp(ip);
-    })();
-  }, []);
+  }, [config]);
 
   return (
-    <div className=" my-14 w-full text-center">
-      <h1>Your FP is:</h1>
-      <h4>
-        <b>Fixed FP:</b>
-        {fixedFP}
-      </h4>
-      <h4>
-        <b>Variable FP:</b>
-        {variableFP}
-      </h4>
-      <h4>
-        <b>Comnbined FP:</b>
-        {combinedFP}
-      </h4>
-    </div>
-  );
+		<div className=" my-14 w-full text-center">
+			<h1>Your FP is:</h1>
+			<h4 className="break-words">
+				<b>Device FP:</b>
+				{deviceFP}
+			</h4>
+			<h4 className="break-words">
+				<b>Browser FP:</b>
+				{browserFP}
+			</h4>
+			<h4 className="break-words">
+				<b>User Settings FP:</b>
+				{userSettingsFP}
+			</h4>
+			<h4 className="break-words">
+				<b>Comnbined FP:</b>
+				{combinedFP}
+			</h4>
+			<button
+				type="button"
+				onClick={resetConfigValues}
+				className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+			>
+				Reset
+			</button>
+		</div>
+	);
 };
