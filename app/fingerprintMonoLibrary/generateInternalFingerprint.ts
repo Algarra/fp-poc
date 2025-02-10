@@ -17,8 +17,7 @@ export const generateInternalFingerprint = async () => {
 		for (const [key, value] of Object.entries(categoryValue)) {
 			if (value.enabled) {
 				const currentValue = await value.get();
-				fingerprintData[categoryName as keyof FPConfigBuilder][key] =
-					currentValue;
+				fingerprintData[categoryName as keyof FPConfigBuilder][key] = currentValue;
 			}
 		}
 	}

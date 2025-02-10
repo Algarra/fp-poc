@@ -1,6 +1,5 @@
 import { FPConfigBuilder } from "../zustand/types";
 
-
 /**
  * Represents a user in the system.
  *
@@ -89,158 +88,151 @@ import { FPConfigBuilder } from "../zustand/types";
       - **example**: "Europe/Luxembourg"
  */
 export const fingerprintConfig: FPConfigBuilder = {
-  device: {
-    platform: {
-      enabled: true,
-      get: () => {
-        const getPlatform = () => {
-        const userAgent = navigator.userAgent;
-        if (/Windows/i.test(userAgent)) return 'Windows';
-        if (/Mac/i.test(userAgent)) return 'macOS';
-        if (/Linux/i.test(userAgent)) return 'Linux';
-        if (/Android/i.test(userAgent)) return 'Android';
-        if (/iPhone/i.test(userAgent)) return 'iPhone-iOS';
-        if (/iPad/i.test(userAgent)) return 'iPad-iOS';
-        if (/iPod/i.test(userAgent)) return 'iPod-iOS';
-        return 'Unknown';
-      };
+	device: {
+		platform: {
+			enabled: true,
+			get: () => {
+				const getPlatform = () => {
+					const userAgent = navigator.userAgent;
+					if (/Windows/i.test(userAgent)) return "Windows";
+					if (/Mac/i.test(userAgent)) return "macOS";
+					if (/Linux/i.test(userAgent)) return "Linux";
+					if (/Android/i.test(userAgent)) return "Android";
+					if (/iPhone/i.test(userAgent)) return "iPhone-iOS";
+					if (/iPad/i.test(userAgent)) return "iPad-iOS";
+					if (/iPod/i.test(userAgent)) return "iPod-iOS";
+					return "Unknown";
+				};
 
-      return getPlatform()
-      },
-    },
-    hardwareConcurrency: {
-      enabled: true,
-      get: () => navigator.hardwareConcurrency,
-    },
-    deviceMemory: {
-      enabled: true,
-      // @ts-expect-error navigator type is wrong
-      get: () => navigator.deviceMemory,
-    },
-    screenWidth: {
-      enabled: true,
-      get: () => window.screen.width,
-    },
-    screenWHeight: {
-      enabled: true,
-      get: () => window.screen.height,
-    },
-    colorDepth: {
-      enabled: true,
-      get: () => window.screen.colorDepth,
-    },
-    devicePixelRatio: {
-      enabled: true,
-      get: () => window.devicePixelRatio,
-    },
-    maxTouchPoints: {
-      enabled: true,
-      get: () => navigator.maxTouchPoints,
-    },
-    keyboardSize: {
-      enabled: true,
-      // @ts-expect-error navigator type is wrong
-      get: async () => await navigator.keyboard?.getLayoutMap()?.size,
-    },
-  },
-  browser: {
-    userAgent: {
-      enabled: true,
-      get: () => navigator.userAgent,
-    },
-    vendor: {
-      enabled: false,
-      get: () => navigator.vendor,
-    },
-    canvasFP: {
-      enabled: true,
-      get: () => {
-        // Create a new canvas element
-        const canvas = document.createElement('canvas');
+				return getPlatform();
+			},
+		},
+		hardwareConcurrency: {
+			enabled: true,
+			get: () => navigator.hardwareConcurrency,
+		},
+		deviceMemory: {
+			enabled: true,
+			// @ts-expect-error navigator type missing deviceMemory
+			get: () => navigator.deviceMemory,
+		},
+		screenWidth: {
+			enabled: true,
+			get: () => window.screen.width,
+		},
+		screenWHeight: {
+			enabled: true,
+			get: () => window.screen.height,
+		},
+		colorDepth: {
+			enabled: true,
+			get: () => window.screen.colorDepth,
+		},
+		devicePixelRatio: {
+			enabled: true,
+			get: () => window.devicePixelRatio,
+		},
+		maxTouchPoints: {
+			enabled: true,
+			get: () => navigator.maxTouchPoints,
+		},
+		keyboardSize: {
+			enabled: true,
+			// @ts-expect-error navigator type missing keyboard
+			get: async () => await navigator.keyboard?.getLayoutMap()?.size,
+		},
+	},
+	browser: {
+		userAgent: {
+			enabled: true,
+			get: () => navigator.userAgent,
+		},
+		vendor: {
+			enabled: false,
+			get: () => navigator.vendor,
+		},
+		canvasFP: {
+			enabled: true,
+			get: () => {
+				const canvas = document.createElement("canvas");
 
-        // Set the attributes for the canvas
-        canvas.id = 'myCanvas';
-        canvas.width = 200;
-        canvas.height = 40;
-        canvas.style.border = '1px solid #000000';
+				canvas.id = "myCanvas";
+				canvas.width = 200;
+				canvas.height = 40;
+				canvas.style.border = "1px solid #000000";
+				canvas.style.display = "none";
+				document.body.appendChild(canvas);
+				const ctx = canvas.getContext("2d");
 
-        // Hide the canvas (so it doesn't display on screen)
-        canvas.style.display = 'none'; // This hides the canvas
+				if (!ctx) return "";
 
-        // Append the canvas to the body or any other container element
-        document.body.appendChild(canvas);
+				// Draw shapes
+				ctx.fillStyle = "rgb(255,0,255)";
+				ctx.beginPath();
+				ctx.rect(20, 20, 150, 100);
+				ctx.fill();
+				ctx.stroke();
+				ctx.closePath();
+				ctx.beginPath();
+				ctx.fillStyle = "rgb(0,255,255)";
+				ctx.arc(50, 50, 50, 0, Math.PI * 2, true);
+				ctx.fill();
+				ctx.stroke();
+				ctx.closePath();
 
-        // Now, you can perform operations on the canvas without it being visible
-        const ctx = canvas.getContext("2d");
+				// Draw text and rectangle
+				const txt = "abz190#$%^@£éú";
+				ctx.textBaseline = "top";
+				ctx.font = '17px "Arial 17"';
+				ctx.textBaseline = "alphabetic";
+				ctx.fillStyle = "rgb(255,5,5)";
+				ctx.rotate(0.03);
+				ctx.fillText(txt, 4, 17);
+				ctx.fillStyle = "rgb(155,255,5)";
+				ctx.shadowBlur = 8;
+				ctx.shadowColor = "red";
+				ctx.fillRect(20, 12, 100, 5);
 
-        if (!ctx) return ''
+				// Convert image to base64 text
+				const src = canvas.toDataURL();
 
-        // Draw shapes
-        ctx.fillStyle = "rgb(255,0,255)";
-        ctx.beginPath();
-        ctx.rect(20, 20, 150, 100);
-        ctx.fill();
-        ctx.stroke();
-        ctx.closePath();
-        ctx.beginPath();
-        ctx.fillStyle = "rgb(0,255,255)";
-        ctx.arc(50, 50, 50, 0, Math.PI * 2, true);
-        ctx.fill();
-        ctx.stroke();
-        ctx.closePath();
+				let hash = 0;
+				for (let i = 0; i < src.length; i++) {
+					const char = src.charCodeAt(i);
+					hash = (hash << 5) - hash + char;
+					hash = hash & hash;
+				}
 
-        // Draw text and rectangle
-        const txt = "abz190#$%^@£éú";
-        ctx.textBaseline = "top";
-        ctx.font = '17px "Arial 17"';
-        ctx.textBaseline = "alphabetic";
-        ctx.fillStyle = "rgb(255,5,5)";
-        ctx.rotate(0.03);
-        ctx.fillText(txt, 4, 17);
-        ctx.fillStyle = "rgb(155,255,5)";
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = "red";
-        ctx.fillRect(20, 12, 100, 5);
-
-        // Convert image to base64 text
-        const src = canvas.toDataURL();
-
-        // Basic hash function
-        let hash = 0;
-        for (let i = 0; i < src.length; i++) {
-          const char = src.charCodeAt(i);
-          hash = (hash << 5) - hash + char;
-          hash = hash & hash;
-        }
-        
-        return hash.toString()
-      },
-    },
-    plugins: {
-      enabled: false,
-      get: () => navigator.plugins,
-    },
-  },
-  userSettings: {
-    language: {
-      enabled: true,
-      get: () => navigator.language,
-    },
-    languages: {
-      enabled: true,
-      get: () => navigator.languages,
-    },
-    reduceMotionSettings: {
-      enabled: true,
-      get: () => `${window.matchMedia("(prefers-reduced-motion: reduce)")?.matches}`,
-    },
-    darkTheme: {
-      enabled: true,
-      get: () => `${window.matchMedia("(prefers-color-scheme: dark)")?.matches}`,
-    },
-    timeZone: {
-      enabled: true,
-      get: () => Intl.DateTimeFormat().resolvedOptions().timeZone,
-    },
-  }
-}
+				return hash.toString();
+			},
+		},
+		plugins: {
+			enabled: false,
+			get: () => navigator.plugins,
+		},
+	},
+	userSettings: {
+		language: {
+			enabled: true,
+			get: () => navigator.language,
+		},
+		languages: {
+			enabled: true,
+			get: () => navigator.languages,
+		},
+		reduceMotionSettings: {
+			enabled: true,
+			get: () =>
+				`${window.matchMedia("(prefers-reduced-motion: reduce)")?.matches}`,
+		},
+		darkTheme: {
+			enabled: true,
+			get: () =>
+				`${window.matchMedia("(prefers-color-scheme: dark)")?.matches}`,
+		},
+		timeZone: {
+			enabled: true,
+			get: () => Intl.DateTimeFormat().resolvedOptions().timeZone,
+		},
+	},
+};
