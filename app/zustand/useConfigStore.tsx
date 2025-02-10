@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { FPConfig, FPConfigBuilder, UseConfigStore } from "./types";
-import { fingerprintConfig } from "./fingerprintConfig";
+import { fingerprintConfig } from "../fingerprintMonoLibrary/fingerprintConfig";
 
 export const useConfigStore = create<UseConfigStore>((set, get) => ({
 	config: {

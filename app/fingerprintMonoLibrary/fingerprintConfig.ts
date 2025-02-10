@@ -1,4 +1,4 @@
-import { FPConfigBuilder } from "./types";
+import { FPConfigBuilder } from "../zustand/types";
 
 
 /**

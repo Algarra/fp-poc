@@ -2,6 +2,7 @@
 import { useConfigStore } from "@/app/zustand/useConfigStore";
 import { useEffect, useState } from "react";
 import { useLocalstorageConfigValues } from "./hooks/useLocalStorageConfigValues";
+import { getHash } from "@/app/fingerprintMonoLibrary/getHash";
 
 export const FPGenerator = () => {
   const [deviceFP, setDeviceFP] = useState<string>("");
@@ -11,15 +12,6 @@ export const FPGenerator = () => {
 
   const config = useConfigStore((state) => state.config);
 	const resetConfigValues = useConfigStore((state) => state.resetConfigValues);
-  const generateFingerprint = async (data: string) => {
-    const hash = await crypto.subtle.digest(
-      "SHA-256",
-      new TextEncoder().encode(data)
-    );
-    return Array.from(new Uint8Array(hash))
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-  };
 
   useLocalstorageConfigValues();
   useEffect(() => {
@@ -31,7 +23,7 @@ export const FPGenerator = () => {
           newDeviceData[key] = currentValue;
         }
       }
-      const fixedFP = await generateFingerprint(
+      const fixedFP = await getHash(
         JSON.stringify(newDeviceData)
       );
       setDeviceFP(fixedFP);
@@ -43,22 +35,20 @@ export const FPGenerator = () => {
           newBrowserData[key] = currentValue;
         }
       }
-      const browserFP = await generateFingerprint(
-        JSON.stringify(newBrowserData)
-      );
+      const browserFP = await getHash(JSON.stringify(newBrowserData));
       setBrowserFP(browserFP);
 
-			      const newUserSettingsData: { [key: string]: unknown } = {};
-						for (const [key, value] of Object.entries(config.userSettings)) {
-							if (value.enabled) {
-								const currentValue = await value.get();
-								newUserSettingsData[key] = currentValue;
-							}
-						}
-						const userSettingsFP = await generateFingerprint(
-							JSON.stringify(newUserSettingsData)
-						);
-						setUserSettingsFP(userSettingsFP);
+			const newUserSettingsData: { [key: string]: unknown } = {};
+			for (const [key, value] of Object.entries(config.userSettings)) {
+				if (value.enabled) {
+					const currentValue = await value.get();
+					newUserSettingsData[key] = currentValue;
+				}
+			}
+			const userSettingsFP = await getHash(
+				JSON.stringify(newUserSettingsData)
+			);
+			setUserSettingsFP(userSettingsFP);
 
       const combinedFP = fixedFP + '__' + browserFP + '__' + userSettingsFP;
       setCombinedFp(combinedFP);
