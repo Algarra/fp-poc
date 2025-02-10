@@ -81,7 +81,7 @@ export const FPGenerator = () => {
 				{userSettingsFP}
 			</h4>
 			<h4 className="break-words">
-				<b>Comnbined FP:</b>
+				<b>Combined FP:</b>
 				{combinedFP}
 			</h4>
 			<button
