@@ -202,8 +202,67 @@ export const fingerprintConfig: FPConfigBuilder = {
 					hash = (hash << 5) - hash + char;
 					hash = hash & hash;
 				}
+				canvas.remove();
 
 				return hash.toString();
+			},
+		},
+		audioFP: {
+			enabled: true,
+			get: async () => {
+				if (!OfflineAudioContext) return 0;
+				const context = new OfflineAudioContext(1, 44100, 44100); // 1 canal, 44100 muestras
+				const oscillator = context.createOscillator();
+				const gain = context.createGain();
+
+				oscillator.type = "triangle";
+				oscillator.frequency.value = 1000;
+				gain.gain.value = 0.001;
+
+				oscillator.connect(gain);
+				gain.connect(context.destination);
+
+				oscillator.start();
+
+				const audioBuffer = await context.startRendering();
+
+				const fingerprint = Array.from(audioBuffer.getChannelData(0))
+					.slice(0, 100)
+					.reduce((acc, val) => acc + Math.abs(val), 0);
+
+				return fingerprint;
+			},
+		},
+		webGLFP: {
+			enabled: true,
+			get: () => {
+				try {
+					const canvas = document.createElement("canvas");
+					canvas.style.display = "none";
+					const gl = canvas.getContext("webgl");
+
+					if (!gl) return "WebGL Not Supported";
+
+					const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+					const gpuVendor = debugInfo
+						? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL)
+						: "Unknown";
+					const gpuRenderer = debugInfo
+						? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
+						: "Unknown";
+
+					const extensions = gl.getSupportedExtensions()?.sort().join(",");
+
+					const shaderPrecision = gl.getShaderPrecisionFormat(
+						gl.VERTEX_SHADER,
+						gl.HIGH_FLOAT
+					)?.precision;
+					canvas.remove();
+
+					return `${gpuVendor}-${gpuRenderer}-${extensions}-${shaderPrecision}`;
+				} catch {
+					return "";
+				}
 			},
 		},
 		plugins: {

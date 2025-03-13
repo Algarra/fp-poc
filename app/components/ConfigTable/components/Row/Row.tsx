@@ -15,6 +15,9 @@ export const Row = memo(
 		const [currentValue, setCurrentValue] = useState<string | number | null>(
 			null
 		);
+    		const [tooltipText, setTooltipText] = useState<string | number | null>(
+					null
+				);
 		const config = useConfigStore(
 			(state) =>
 				state.config
@@ -41,7 +44,7 @@ export const Row = memo(
 		}, []);
 
 		return (
-			<tr className="bg-white border-b dark:bg-neutral-800 dark:border-neutral-700">
+			<tr className="bg-white relative border-b dark:bg-neutral-800 dark:border-neutral-700">
 				<th
 					scope="row"
 					className="px-6 py-4 font-medium text-neutral-900 whitespace-nowrap dark:text-white"
@@ -66,13 +69,35 @@ export const Row = memo(
 					{configName}
 				</th>
 				<td className="px-6 py-4">{configData.description}</td>
-				<td className="px-6 py-4">{example}</td>
-				<td className="px-6 py-4">{currentValue}</td>
+				<td
+					data-tooltip-target="tooltip-default"
+					className="px-6 py-4 text-ellipsis overflow-hidden max-w-80"
+					onMouseOver={() => setTooltipText(example)}
+					onMouseOut={() => setTooltipText(null)}
+				>
+					{example}
+				</td>
+				<td
+					className="px-6 py-4 text-ellipsis overflow-hidden max-w-80"
+					onMouseOver={() => setTooltipText(currentValue)}
+					onMouseOut={() => setTooltipText(null)}
+				>
+					{currentValue}
+				</td>
 				<td className="px-6 py-4">
 					<a href={configData.docs} target="_blank" className=" text-blue-400">
 						DOCUMENTATION
 					</a>
 				</td>
+				{tooltipText !== null && (
+					<td
+						role="tooltip"
+						className="absolute left-0 break-all bottom-[100%] max-w-[80%] z-10 px-3 py-2 text-sm text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs tooltip dark:bg-gray-700"
+					>
+						{tooltipText}
+						<div className="tooltip-arrow" data-popper-arrow></div>
+					</td>
+				)}
 			</tr>
 		);
 	}

@@ -95,8 +95,23 @@ export const useConfigStore = create<UseConfigStore>((set, get) => ({
 				enabled: false,
 				description: "generates a canvas fingerprint",
 				docs: "https://en.wikipedia.org/wiki/Canvas_fingerprinting",
-				example: "",
+				example: "1332266307",
 				get: fingerprintConfig.browser.canvasFP.get,
+			},
+			audioFP: {
+				enabled: true,
+				description: "generate a FP based on how the device handles the audio",
+				example: 0.04985900235897134,
+				get: fingerprintConfig.browser.audioFP.get,
+				docs: "https://developer.mozilla.org/en-US/docs/Web/API/OfflineAudioContext",
+			},
+			webGLFP: {
+				enabled: true,
+				description: "generate a FP based on webGl",
+				example:
+					"Google Inc. (Apple)-ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Pro, Unspecified Version)-ANGLE_instanced_arrays,EXT_blend_minmax,EXT_clip_control,EXT_color_buffer_half_float,EXT_depth_clamp,EXT_disjoint_timer_query,EXT_float_blend,EXT_frag_depth,EXT_polygon_offset_clamp,EXT_sRGB,EXT_shader_texture_lod,EXT_texture_compression_bptc,EXT_texture_compression_rgtc,EXT_texture_filter_anisotropic,EXT_texture_mirror_clamp_to_edge,KHR_parallel_shader_compile,OES_element_index_uint,OES_fbo_render_mipmap,OES_standard_derivatives,OES_texture_float,OES_texture_float_linear,OES_texture_half_float,OES_texture_half_float_linear,OES_vertex_array_object,WEBGL_blend_func_extended,WEBGL_color_buffer_float,WEBGL_compressed_texture_astc,WEBGL_compressed_texture_etc,WEBGL_compressed_texture_etc1,WEBGL_compressed_texture_pvrtc,WEBGL_compressed_texture_s3tc,WEBGL_compressed_texture_s3tc_srgb,WEBGL_debug_renderer_info,WEBGL_debug_shaders,WEBGL_depth_texture,WEBGL_draw_buffers,WEBGL_lose_context,WEBGL_multi_draw,WEBGL_polygon_mode-23",
+				get: fingerprintConfig.browser.webGLFP.get,
+				docs: "https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Getting_started_with_WebGL",
 			},
 			plugins: {
 				enabled: false,
@@ -226,18 +241,24 @@ export const useConfigStore = create<UseConfigStore>((set, get) => ({
 		});
 	},
 	resetConfigValues: () => {
-		const enabledDeviceValues: Array<keyof FPConfigBuilder['device']> = [];
+		const enabledDeviceValues: Array<keyof FPConfigBuilder["device"]> = [];
 		Object.entries(fingerprintConfig.device).forEach(([key, value]) => {
-			if (value.enabled) enabledDeviceValues.push(key as keyof FPConfigBuilder["device"]);
+			if (value.enabled)
+				enabledDeviceValues.push(key as keyof FPConfigBuilder["device"]);
 		});
 		const enabledBrowserValues: Array<keyof FPConfigBuilder["browser"]> = [];
 		Object.entries(fingerprintConfig.browser).forEach(([key, value]) => {
-			if (value.enabled) enabledBrowserValues.push(key as keyof FPConfigBuilder["browser"]);
+			if (value.enabled)
+				enabledBrowserValues.push(key as keyof FPConfigBuilder["browser"]);
 		});
-		const enabledUserSettingsValues: Array<keyof FPConfigBuilder["userSettings"]> =
-			[];
+		const enabledUserSettingsValues: Array<
+			keyof FPConfigBuilder["userSettings"]
+		> = [];
 		Object.entries(fingerprintConfig.userSettings).forEach(([key, value]) => {
-			if (value.enabled) enabledUserSettingsValues.push(key as keyof FPConfigBuilder["userSettings"]);
+			if (value.enabled)
+				enabledUserSettingsValues.push(
+					key as keyof FPConfigBuilder["userSettings"]
+				);
 		});
 
 		// window.localStorage.setItem(
@@ -256,5 +277,5 @@ export const useConfigStore = create<UseConfigStore>((set, get) => ({
 		get().setDeviceConfig(enabledDeviceValues);
 		get().setBrowserConfig(enabledBrowserValues);
 		get().setUserSettingsConfig(enabledUserSettingsValues);
-	}
+	},
 }));

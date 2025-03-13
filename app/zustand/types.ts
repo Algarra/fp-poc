@@ -26,6 +26,8 @@ export type FPConfigBuilder = {
 		userAgent: ValueConfigBuilder<string>;
 		vendor: ValueConfigBuilder<string>;
 		canvasFP: ValueConfigBuilder<string>;
+		audioFP: ValueConfigBuilder<number>;
+		webGLFP: ValueConfigBuilder<string>;
 		plugins: ValueConfigBuilder<object>;
 	};
 	userSettings: {
@@ -61,6 +63,8 @@ export type FPConfig = {
 		userAgent: ConfigValue<string>;
 		vendor: ConfigValue<string>;
 		canvasFP: ConfigValue<string>;
+		audioFP: ConfigValue<number>;
+		webGLFP: ConfigValue<string>;
 		plugins: ConfigValue<object>;
 	};
 	userSettings: {
